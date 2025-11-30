@@ -1,0 +1,35 @@
+{
+  // 包含需要 TypeScript 处理的配置文件
+  "include": [
+    "vite.config.*", // Vite 配置文件
+    "vitest.config.*", // Vitest 测试配置
+    "cypress.config.*", // Cypress E2E 测试配置
+    "nightwatch.conf.*", // Nightwatch 测试配置
+    "playwright.config.*", // Playwright 测试配置
+    "eslint.config.*" // ESLint 配置文件
+  ],
+  "compilerOptions": {
+    // 项目引用相关
+    "composite": true, // 启用项目引用，允许 TypeScript 将项目作为依赖引用
+    "noEmit": true, // 不生成输出文件（.js, .d.ts 等），仅用于类型检查
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo", // 增量编译信息存储位置
+
+    // 模块解析配置
+    "module": "ESNext", // 使用最新的 ES 模块系统
+    "moduleResolution": "Bundler", // 使用打包工具（如 Vite）的模块解析策略
+    "target": "ES2022", // 编译目标为 ES2022 语法
+    "lib": ["ES2022"], // 包含 ES2022 标准库类型定义
+    "types": ["node"], // 包含 Node.js 类型定义
+
+    // 类型检查严格性
+    "strict": true, // 启用所有严格类型检查选项
+    "skipLibCheck": true, // 跳过声明文件的类型检查，加快编译速度
+
+    // 模块互操作性
+    "esModuleInterop": true, // 启用 ES 模块与 CommonJS 模块的互操作性
+    "allowSyntheticDefaultImports": true, // 允许从没有默认导出的模块中默认导入
+
+    // 文件系统
+    "forceConsistentCasingInFileNames": true // 强制文件名大小写一致，避免跨平台问题
+  }
+}

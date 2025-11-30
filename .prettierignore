@@ -1,0 +1,28 @@
+# 依赖
+node_modules
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# 构建产物
+dist
+dist-ssr
+coverage
+.vite
+.cache
+
+# 环境文件
+.env
+.env.*
+
+# 日志
+*.log
+
+# 编辑器
+.vscode
+.idea
+
+# 其他
+*.min.js
+*.min.css
+public
