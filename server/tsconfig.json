@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    /* --- 你指定的核心配置 (新技术) --- */
+    "module": "ESNext", // 使用 ESM 模块规范
+    "moduleResolution": "node", // Node.js 风格的模块解析
+    "target": "ES2023", // 编译目标为较新的 JS 版本
+    "strict": true, // 开启严格模式
+    "esModuleInterop": true, // 允许导入 CommonJS 模块
+    "ignoreDeprecations": "5.0", // 忽略废弃警告
+
+    /* --- 原本配置中有用的部分 --- */
+    "sourceMap": true, // 生成 .map 文件，方便调试
+    "skipLibCheck": true, // 跳过依赖库的类型检查 (加速编译)
+
+    /* --- 项目结构配置 (必不可少) --- */
+    "rootDir": ".", // 源码目录
+    "outDir": "./dist", // 输出目录
+    "baseUrl": ".",
+    "paths": {
+      "@prisma/client": ["./prisma/generated/client"]
+    }
+  },
+  "include": ["src/**/*", "prisma/generated/client/**/*"] // 指定编译范围
+}

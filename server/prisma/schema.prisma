@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Song {
+  id        Int      @id @default(autoincrement())
+  title     String
+  artist    String
+  album     String? // 新增：专辑名称
+  url       String
+  cover     String?
+  lrcUrl    String?
+  duration  Int? // 歌曲时长（秒）
+  size      Int      @default(0) // 新增：文件大小(字节)，用于统计存储占用
+  playCount Int      @default(0) // 播放次数统计（冗余字段，用于快速排序）
+  isDeleted Boolean  @default(false) // 软删除标记
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  playRecords PlayRecord[]
+
+  @@index([title])
+  @@index([artist])
+  @@index([createdAt])
+  @@index([playCount]) // 用于“总热度榜”快速排序
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  role      String   @default("user") // "admin" 或 "user"
+  createdAt DateTime @default(now())
+
+  playRecords PlayRecord[]
+}
+
+model PlayRecord {
+  id       Int      @id @default(autoincrement())
+  playedAt DateTime @default(now())
+
+  // 关联歌曲
+  song   Song @relation(fields: [songId], references: [id])
+  songId Int
+
+  // 关联用户（记录是谁播放的）
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  @@index([playedAt]) // 用于“月度榜单”按时间筛选
+  @@index([songId])
+  @@index([userId])
+}

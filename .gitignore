@@ -40,3 +40,9 @@ __screenshots__/
 # Windows
 Thumbs.db
 Desktop.ini
+/src/generated/prisma
+
+# Server / Database
+*.db
+*.db-journal
+server/prisma/generated
