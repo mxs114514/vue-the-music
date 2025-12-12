@@ -21,7 +21,7 @@
       </el-menu-item>
       <el-menu-item index="/my-music">
         <el-icon><IEpStarFilled /></el-icon>
-        <span>我喜欢的音乐</span>
+        <span>我的收藏</span>
       </el-menu-item>
       <el-menu-item index="/rank">
         <el-icon><IEpTrophy /></el-icon>

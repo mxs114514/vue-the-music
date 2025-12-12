@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import type { Song as SongType } from '@/types'
+import request from '@/utils/request'
+import { toggleFavorite as toggleFavoriteApi } from '@/api/favorite'
+import { ElMessage } from 'element-plus'
 
 const STORAGE_KEY = 'ccb-player-state'
 
@@ -13,6 +16,42 @@ export const usePlayerStore = defineStore('player', () => {
   const isPlaying = ref(false)
   const currenRate = ref(1.0)
   const currenVolume = ref(1.0)
+
+  // 切换收藏状态
+  const toggleFavorite = async (song: SongType) => {
+    try {
+      const res = await toggleFavoriteApi(song.id)
+      // 注意：request 拦截器已经解包了 response.data，所以这里直接使用 res
+      // @ts-ignore
+      const data = res.data || res
+
+      const isFavorited = data.isFavorited
+      const message = data.message
+
+      // 更新传入歌曲对象的状态
+      song.isFavorited = isFavorited
+
+      // 如果当前播放的歌曲就是这首，也要同步更新
+      if (currentSong.value?.id === song.id) {
+        currentSong.value.isFavorited = isFavorited
+      }
+
+      // 如果播放列表中有这首歌，也要同步更新
+      const listItem = songList.value.find((s) => s.id === song.id)
+      if (listItem) {
+        listItem.isFavorited = isFavorited
+      }
+
+      ElMessage({
+        message: message,
+        type: 'success',
+        duration: 1000, // 1秒后消失
+      })
+    } catch (error) {
+      // 错误处理已在 request 拦截器或组件中处理，这里可以忽略或打印
+      console.error(error)
+    }
+  }
 
   const playSong = (song: SongType) => {
     currentSong.value = song
@@ -71,25 +110,22 @@ export const usePlayerStore = defineStore('player', () => {
   const fetchSongList = async (force = false) => {
     // 缓存策略：如果已有数据且不是强制刷新，则直接返回
     if (songList.value.length > 0 && !force) {
-      console.log('⚡ [PlayerStore] 数据已存在，使用缓存，跳过请求')
+      // console.log('⚡ [PlayerStore] 数据已存在，使用缓存，跳过请求')
       return
     }
 
     console.log('🚀 [PlayerStore] 开始获取歌曲列表...')
     isLoading.value = true
     try {
-      const response = await fetch('/api/songs')
-      console.log('📡 [PlayerStore] 接口响应状态:', response.status)
-
-      const data = await response.json()
+      const data = await request.get<SongType[]>('/songs')
       console.log('📦 [PlayerStore] 获取到的数据:', data)
 
       songList.value = data
     } catch (error) {
-      console.error('❌ [PlayerStore] 获取歌曲列表失败:', error)
+      // console.error('❌ [PlayerStore] 获取歌曲列表失败:', error)
     } finally {
       isLoading.value = false
-      console.log('✅ [PlayerStore] 获取流程结束, isLoading:', isLoading.value)
+      // console.log('✅ [PlayerStore] 获取流程结束, isLoading:', isLoading.value)
     }
   }
 
@@ -159,5 +195,6 @@ export const usePlayerStore = defineStore('player', () => {
     prevSong,
     playRandomSong,
     fetchSongList,
+    toggleFavorite,
   }
 })

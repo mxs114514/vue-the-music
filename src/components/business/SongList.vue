@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePlayerStore } from '@/stores/player'
 import type { Song } from '@/types'
-import { VideoPlay, Picture, Loading } from '@element-plus/icons-vue'
+import { VideoPlay, Picture, Loading, Star, StarFilled } from '@element-plus/icons-vue'
 import ScrollingText from '@/components/base/ScrollingText.vue'
 
 // 接收父组件传来的歌曲列表
@@ -18,6 +18,12 @@ const playerStore = usePlayerStore()
 // 处理点击播放
 const handlePlay = (song: Song) => {
   playerStore.playSong(song)
+}
+
+// 处理点击收藏
+const handleFavorite = (e: Event, song: Song) => {
+  e.stopPropagation() // 阻止冒泡，防止触发播放
+  playerStore.toggleFavorite(song)
 }
 </script>
 
@@ -62,6 +68,16 @@ const handlePlay = (song: Song) => {
           <!-- 悬停显示的播放图标 -->
           <div class="play-overlay">
             <el-icon><VideoPlay /></el-icon>
+          </div>
+
+          <!-- 收藏按钮 (右下角) -->
+          <div
+            class="favorite-btn"
+            :class="{ 'is-active': song.isFavorited }"
+            @click="(e) => handleFavorite(e, song)"
+          >
+            <el-icon v-if="song.isFavorited"><StarFilled /></el-icon>
+            <el-icon v-else><Star /></el-icon>
           </div>
         </div>
 
@@ -153,6 +169,44 @@ const handlePlay = (song: Song) => {
 
 .song-card:hover .play-overlay {
   opacity: 1;
+}
+
+/* 收藏按钮样式 */
+.favorite-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  z-index: 2; /* 确保在遮罩层之上 */
+  opacity: 0; /* 默认隐藏 */
+  transform: scale(0.8);
+}
+
+.song-card:hover .favorite-btn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.favorite-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.favorite-btn .el-icon {
+  font-size: 18px;
+  color: #e0e0e0; /* 默认灰色 */
+}
+
+.favorite-btn.is-active .el-icon {
+  color: #e6a23c; /* 激活时黄色 */
 }
 
 .info .title {

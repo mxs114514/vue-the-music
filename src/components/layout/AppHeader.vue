@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+</script>
+
 <template>
   <header class="header">
     <div class="search-bar">
@@ -14,8 +20,8 @@
       </el-input>
     </div>
     <div class="user-info">
-      <el-text size="large" tag="b">用户</el-text>
-      <el-avatar size="midium">
+      <el-text size="large" tag="b">{{ authStore.user?.nickname || authStore.user?.username || '未登录' }}</el-text>
+      <el-avatar size="midium" :src="authStore.user?.avatar">
         <el-icon><IEpUserFilled /></el-icon>
       </el-avatar>
     </div>

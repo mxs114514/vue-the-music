@@ -1,35 +1,50 @@
 <template>
   <div class="edit-profile-view">
     <h1>编辑个人信息</h1>
-    <el-form label-width="100px" style="max-width: 600px">
-      <el-form-item label="用户名">
-        <el-input placeholder="请输入用户名" />
-      </el-form-item>
-      <el-form-item label="简介">
-        <el-input type="textarea" placeholder="请输入个人简介" />
-      </el-form-item>
-      <el-form-item label="性别">
-        <el-radio-group>
-          <el-radio label="男">男</el-radio>
-          <el-radio label="女">女</el-radio>
-          <el-radio label="保密">保密</el-radio>
-        </el-radio-group>
-      </el-form-item>
-      <el-form-item label="生日">
-        <el-date-picker type="date" placeholder="选择日期" style="width: 100%" />
-      </el-form-item>
-      <el-form-item label="地区">
-        <el-input placeholder="请输入地区" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary">保存</el-button>
-        <el-button @click="$router.back()">取消</el-button>
-      </el-form-item>
-    </el-form>
+
+    <!-- 使用封装好的表单组件 -->
+    <ProfileEditForm
+      :initial-user="authStore.user"
+      :loading="saving"
+      @submit="handleSave"
+      @cancel="handleCancel"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+import ProfileEditForm from '@/components/business/ProfileEditForm.vue'
+
+const router = useRouter()
+const authStore = useAuthStore()
+const saving = ref(false)
+
+// 处理保存逻辑
+const handleSave = async (formData: any) => {
+  saving.value = true
+  try {
+    console.log('🚀 [EditProfile] 提交数据:', formData)
+
+    // 调用 Store 中的 Action 更新用户信息
+    await authStore.updateUserProfile(formData)
+
+    ElMessage.success('保存成功')
+    router.back()
+  } catch (error) {
+    console.error('保存失败:', error)
+    ElMessage.error('保存失败')
+  } finally {
+    saving.value = false
+  }
+}
+
+const handleCancel = () => {
+  router.back()
+}
 </script>
 
 <style scoped>

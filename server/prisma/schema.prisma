@@ -10,6 +10,8 @@ datasource db {
   provider = "sqlite"
 }
 
+// ...existing code...
+
 model Song {
   id        Int      @id @default(autoincrement())
   title     String
@@ -26,16 +28,19 @@ model Song {
   updatedAt DateTime @updatedAt
 
   playRecords PlayRecord[]
+  favoritedBy Favorite[] // 新增：关联收藏记录，用于统计收藏数
 
   @@index([title])
   @@index([artist])
   @@index([createdAt])
   @@index([playCount]) // 用于“总热度榜”快速排序
+  @@index([album])
 }
 
 model User {
   id        Int       @id @default(autoincrement())
   username  String    @unique
+  nickname  String? // 用户昵称，用于显示
   password  String
   role      String    @default("user") // "admin" 或 "user"
   createdAt DateTime  @default(now())
@@ -46,6 +51,27 @@ model User {
   region    String? // 地区
 
   playRecords PlayRecord[]
+  favorites   Favorite[] // 新增：用户的收藏列表
+}
+
+// 新增：收藏/喜欢 中间表
+model Favorite {
+  id Int @id @default(autoincrement())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  song   Song @relation(fields: [songId], references: [id])
+  songId Int
+
+  createdAt DateTime @default(now()) // 关键：收藏时间。用于生成“月度收藏榜”、“年度收藏榜”
+
+  // 同时依然强制“一个用户对同一首歌只能收藏一次”
+  @@unique([userId, songId])
+  // 索引优化
+  @@index([createdAt]) // 用于按时间范围筛选（月榜/年榜）
+  @@index([songId]) // 用于统计某首歌的收藏总数
+  @@index([userId]) // 用于查询某人的收藏列表
 }
 
 model PlayRecord {

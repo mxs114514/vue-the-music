@@ -20,15 +20,25 @@ const form = reactive({
 const handleRegister = async () => {
   if (!form.username || !form.password) return ElMessage.warning('请输入用户名和密码')
   if (form.password !== form.confirmPassword) return ElMessage.warning('两次输入的密码不一致')
+
+  console.log('🚀 [Register] 开始注册流程', { username: form.username })
   loading.value = true
   try {
+    console.log('📡 [Register] 调用 authStore.register...')
     await authStore.register(form.username, form.password)
-    ElMessage.success('注册成功，已自动登录')
-    router.push('/')
+    console.log('✅ [Register] 注册成功')
+
+    ElMessage.success('注册成功，请切换到登录页进行登录')
+    // 清空表单
+    form.username = ''
+    form.password = ''
+    form.confirmPassword = ''
   } catch (error: any) {
+    console.error('❌ [Register] 注册失败:', error)
     ElMessage.error(error.message || '注册失败')
   } finally {
     loading.value = false
+    console.log('🏁 [Register] 流程结束')
   }
 }
 </script>

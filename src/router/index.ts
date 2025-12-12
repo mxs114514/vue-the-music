@@ -51,22 +51,21 @@ const router = createRouter({
   ],
 })
 
-// 全局前置守卫
-// router.beforeEach((to, from, next) => {
-//   const authStore = useAuthStore()
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
 
-//   // 1. 如果没有登录，且访问的不是登录页 -> 强制跳转登录页
-//   if (!authStore.token && to.name !== 'login') {
-//     next({ name: 'login' })
-//   }
-//   // 2. 如果已经登录，且访问的是登录页 -> 跳转首页 (避免重复登录)
-//   else if (authStore.token && to.name === 'login') {
-//     next({ name: 'home' })
-//   }
-//   // 3. 其他情况放行
-//   else {
-//     next()
-//   }
-// })
+  // 1. 如果没有登录，且访问的不是登录页 -> 强制跳转登录页
+  if (!authStore.token && to.name !== 'login') {
+    next({ name: 'login' })
+  }
+  // 2. 如果已经登录，且访问的是登录页 -> 跳转首页 (避免重复登录)
+  else if (authStore.token && to.name === 'login') {
+    next({ name: 'home' })
+  }
+  // 3. 其他情况放行
+  else {
+    next()
+  }
+})
 
 export default router

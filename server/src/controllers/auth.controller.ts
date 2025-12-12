@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // 5. 返回成功，不要返回密码！
     res.status(201).json({
       message: '注册成功',
-      user: { id: user.id, username: user.username, avatar: user.avatar },
+      user: { id: user.id, username: user.username, nickname: user.nickname, avatar: user.avatar },
     })
   } catch (error) {
     console.error('注册错误:', error)
@@ -90,6 +90,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       user: {
         id: user.id,
         username: user.username,
+        nickname: user.nickname,
         avatar: user.avatar,
         role: user.role,
       },

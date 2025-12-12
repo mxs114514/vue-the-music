@@ -1,72 +1,102 @@
-import { useAuthStore } from '@/stores/auth'
+import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios'
 
-const BASE_URL = 'http://localhost:3000/api'
+// 存储 Token 获取器和 Logout 处理器的变量
+let getToken: () => string | null = () => null
+let handleLogout: () => void = () => {}
 
-// 定义通用的请求选项接口
-interface RequestOptions extends RequestInit {
-  headers?: Record<string, string>
+// 初始化函数，用于注入 store 的逻辑
+export const initRequest = (tokenGetter: () => string | null, logoutHandler: () => void) => {
+  getToken = tokenGetter
+  handleLogout = logoutHandler
 }
 
-// 封装 fetch
-async function request<T>(url: string, options: RequestOptions = {}): Promise<T> {
-  // 1. 处理 URL (拼接 BaseURL)
-  const fullUrl = url.startsWith('http') ? url : `${BASE_URL}${url}`
+// 1. 创建 axios 实例
+const service = axios.create({
+  // 使用 /api 前缀，配合 vite.config.ts 中的 proxy 转发到后端
+  baseURL: '/api',
+  timeout: 10000, // 请求超时时间
+})
 
-  // 2. 处理 Headers
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...options.headers,
+// 2. 请求拦截器
+service.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  },
+  (error: any) => {
+    return Promise.reject(error)
   }
+)
 
-  // 3. 自动添加 Token (如果有)
-  const authStore = useAuthStore()
-  if (authStore.token) {
-    headers['Authorization'] = `Bearer ${authStore.token}`
-  }
+// 3. 响应拦截器
+service.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // 2xx 范围内的状态码都会触发该函数
+    // 直接返回 data，进行"脱壳"处理
+    return response.data
+  },
+  (error: any) => {
+    // 超出 2xx 范围的状态码都会触发该函数
+    const { response } = error
 
-  // 4. 发起请求
-  const response = await fetch(fullUrl, {
-    ...options,
-    headers,
-  })
+    let errorMessage = '请求失败'
 
-  // 5. 统一错误处理
-  if (!response.ok) {
-    let errorMessage = `HTTP Error: ${response.status}`
-    try {
-      const errorData = await response.json()
-      errorMessage = errorData.message || errorMessage
-    } catch (e) {
-      // 忽略解析错误
+    if (response) {
+      // 请求已发出，服务器响应了状态码
+      switch (response.status) {
+        case 401:
+          // 如果是登录接口报 401，说明是用户名或密码错误，不是 Token 过期
+          // 注意：axios 的 config.url 可能是相对路径也可能是绝对路径，这里简单判断包含关系
+          if (error.config?.url?.includes('/auth/login')) {
+            errorMessage = response.data?.message || '用户名或密码错误'
+          } else {
+            // 其他接口报 401，才是 Token 过期或未登录
+            handleLogout()
+            errorMessage = '登录已过期，请重新登录'
+          }
+          break
+        case 403:
+          errorMessage = '没有权限访问'
+          break
+        case 404:
+          errorMessage = '请求的资源不存在'
+          break
+        case 500:
+          errorMessage = '服务器内部错误'
+          break
+        default:
+          errorMessage = response.data?.message || `HTTP Error: ${response.status}`
+      }
+    } else {
+      // 网络错误或请求被取消
+      errorMessage = error.message || '网络连接异常'
     }
 
-    // 处理 401 Token 过期
-    if (response.status === 401) {
-      authStore.logout()
-    }
+    // 使用 ElementPlus 进行错误提示
+    ElNotification.error({
+      title: '请求错误',
+      message: errorMessage,
+      duration: 1000,
+    })
+    console.error('❌ [Request Error]', errorMessage)
 
-    throw new Error(errorMessage)
+    return Promise.reject(new Error(errorMessage))
   }
+)
 
-  // 6. 解析响应数据
-  return response.json()
-}
-
-// 导出便捷方法
+// 4. 导出封装的方法，保持与原有 API 一致
 export default {
-  get: <T>(url: string) => request<T>(url, { method: 'GET' }),
+  get: <T>(url: string, config?: InternalAxiosRequestConfig) => service.get<T, T>(url, config),
 
-  post: <T>(url: string, data: any) =>
-    request<T>(url, {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+  post: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig) =>
+    service.post<T, T>(url, data, config),
 
-  put: <T>(url: string, data: any) =>
-    request<T>(url, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-    }),
+  put: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig) =>
+    service.put<T, T>(url, data, config),
 
-  delete: <T>(url: string) => request<T>(url, { method: 'DELETE' }),
+  delete: <T>(url: string, config?: InternalAxiosRequestConfig) =>
+    service.delete<T, T>(url, config),
 }

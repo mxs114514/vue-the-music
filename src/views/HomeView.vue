@@ -73,7 +73,7 @@ watch(songList, () => {
 
 <template>
     <div class="home-view">
-      <el-text size="large" tag="b">今日推荐</el-text>
+      <h1 class="page-title">今日推荐</h1>
 
       <!-- 使用封装的业务组件 -->
       <SongList
@@ -100,7 +100,7 @@ watch(songList, () => {
             </div>
             <div class="info">
               <h3 class="title">随机一哈</h3>
-              <p class="artist">点击随机播放</p>
+              <p class="artist">点击随机哈气</p>
             </div>
           </el-card>
         </template>
@@ -112,6 +112,15 @@ watch(songList, () => {
 .home-view {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  margin-bottom: 20px;
+  color: var(--text-color);
 }
 
 /* 复用 SongList 内部的卡片样式，这里需要重新定义一下 random-card 特有的样式 */

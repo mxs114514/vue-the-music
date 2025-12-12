@@ -17,15 +17,22 @@ const form = reactive({
 
 const handleLogin = async () => {
   if (!form.username || !form.password) return ElMessage.warning('请输入用户名和密码')
+
+  console.log('🚀 [Login] 开始登录流程', { username: form.username })
   loading.value = true
   try {
+    console.log('📡 [Login] 调用 authStore.login...')
     await authStore.login(form.username, form.password)
+    console.log('✅ [Login] 登录成功，准备跳转')
+
     ElMessage.success('登录成功')
     router.push('/')
   } catch (error: any) {
+    console.error('❌ [Login] 登录失败:', error)
     ElMessage.error(error.message || '登录失败')
   } finally {
     loading.value = false
+    console.log('🏁 [Login] 流程结束')
   }
 }
 </script>

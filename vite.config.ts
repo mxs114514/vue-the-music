@@ -49,13 +49,16 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000', // 后端地址
         changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, '') // 如果后端接口没有 /api 前缀，可以用这行去掉
       },
       '/covers': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },
       '/songs': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/avatars': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },

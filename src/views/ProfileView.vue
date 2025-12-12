@@ -11,7 +11,7 @@
         <!-- 右侧信息 -->
         <el-col :span="18">
           <div class="user-header">
-            <h2 class="nickname">{{ userInfo.username }}</h2>
+            <h2 class="nickname">{{ userInfo.nickname || userInfo.username }}</h2>
             <el-icon class="edit-icon" @click="$router.push('/edit-profile')">
               <Edit />
             </el-icon>
@@ -27,12 +27,6 @@
       </el-row>
     </el-card>
 
-    <!-- 2. 我喜欢的音乐 -->
-    <div class="section">
-      <el-text size="large" tag="b" class="section-title">我喜欢的音乐</el-text>
-      <SongList :songs="likedSongs" empty-text="暂无喜欢的音乐" />
-    </div>
-
     <!-- 3. 我上传的音乐 -->
     <div class="section">
       <el-text size="large" tag="b" class="section-title">我上传的音乐</el-text>
@@ -42,27 +36,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Edit } from '@element-plus/icons-vue'
 import type { Song } from '@/types'
 import { usePlayerStore } from '@/stores/player'
+import { useAuthStore } from '@/stores/auth'
 import SongList from '@/components/business/SongList.vue' // 引入新组件
 
 const playerStore = usePlayerStore()
+const authStore = useAuthStore()
 
-// 模拟用户信息
-const userInfo = ref({
-  username: '用户',
+// 从 store 获取用户信息
+const userInfo = computed(() => authStore.user || {
+  username: '未登录',
+  nickname: '', // 补充 nickname 默认值
   avatar: '',
-  bio: '热爱生活，热爱音乐',
-  gender: '未知',
-  birthday: '未知',
-  region: '未知'
+  bio: '',
+  gender: '',
+  birthday: '',
+  region: ''
 })
-
-// 模拟数据
-const likedSongs = ref<Song[]>([
-])
 
 const uploadedSongs = ref<Song[]>([])
 

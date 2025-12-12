@@ -19,9 +19,18 @@ export const useAuthStore = defineStore(
         })
 
         // 保存状态
-        token.value = res.token
-        user.value = res.user
+        if (res.token) {
+          token.value = res.token
+        }
+        if (res.user) {
+          user.value = res.user as User
+        }
 
+        ElNotification.success({
+          title: '成功',
+          message: '登录成功',
+          duration: 1000,
+        })
         return true
       } catch (error) {
         console.error('登录失败:', error)
@@ -33,15 +42,17 @@ export const useAuthStore = defineStore(
     const register = async (username: string, password: string) => {
       try {
         // 注册接口也返回 AuthResponse (包含 token 和 user)
-        const res = await request.post<AuthResponse>('/auth/register', {
+        await request.post<AuthResponse>('/auth/register', {
           username,
           password,
         })
 
-        // 注册成功后直接登录
-        token.value = res.token
-        user.value = res.user
-
+        // 注册成功后不自动登录，而是返回 true 让组件处理跳转
+        ElNotification.success({
+          title: '成功',
+          message: '注册成功',
+          duration: 1000,
+        })
         return true
       } catch (error) {
         console.error('注册失败:', error)
@@ -57,12 +68,44 @@ export const useAuthStore = defineStore(
       // router.push('/login')
     }
 
+    const fetchUserProfile = async () => {
+      try {
+        const data = await request.get<User>('/user/profile')
+        user.value = data
+      } catch (error) {
+        console.error('获取用户信息失败:', error)
+      }
+    }
+
+    // 更新用户信息
+    const updateUserProfile = async (data: Partial<User>) => {
+      try {
+        const res = await request.put<{ message: string; user: User }>('/user/profile', data)
+        // 更新成功后，直接更新本地 store，或者再次 fetch
+        // 这里后端返回了新的 user 对象，直接更新最快
+        if (res.user) {
+          user.value = res.user
+          ElNotification.success({
+            title: '成功',
+            message: '个人信息更新成功',
+            duration: 1000,
+          })
+        }
+        return true
+      } catch (error) {
+        console.error('更新用户信息失败:', error)
+        throw error
+      }
+    }
+
     return {
       token,
       user,
       login,
       register,
       logout,
+      fetchUserProfile,
+      updateUserProfile,
     }
   },
   {

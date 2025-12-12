@@ -11,6 +11,7 @@ export interface Song {
   size: number
   playCount: number
   isDeleted: boolean
+  isFavorited?: boolean // 当前用户是否收藏
   createdAt: string // 前端接收到的 Date 通常是 ISO 字符串
   updatedAt: string
 }
@@ -19,6 +20,7 @@ export interface Song {
 export interface User {
   id: number
   username: string
+  nickname?: string | null // 新增昵称字段
   role: 'admin' | 'user'
   avatar?: string | null
   bio?: string | null
@@ -31,8 +33,8 @@ export interface User {
 // 登录/注册成功后的响应数据
 export interface AuthResponse {
   message: string
-  token: string
-  user: User
+  token?: string // 注册接口可能不返回 token
+  user: Partial<User> // 接口返回的 user 字段可能不全
 }
 
 // 通用错误响应
@@ -46,4 +48,11 @@ export interface PlayRecord {
   songId: number
   userId?: number | null
   playedAt: string
+}
+
+// 专辑接口
+export interface Album {
+  name: string
+  count: number
+  cover: string | null
 }
