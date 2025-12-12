@@ -1,20 +1,19 @@
 import express from 'express'
 import cors from 'cors'
 import songRoutes from './routes/song.routes.js'
+import authRoutes from './routes/auth.routes.js' // 1. 引入 auth 路由
 
 const app = express()
 const PORT = process.env.PORT || 3000
 
 // 中间件
-app.use(cors()) // 允许跨域
+app.use(cors())
 app.use(express.json())
-
-// 静态资源托管 (让前端能访问到 /songs/xxx.mp3)
-// 托管 server/public 目录
 app.use(express.static('public'))
 
 // 注册路由
 app.use('/api/songs', songRoutes)
+app.use('/api/auth', authRoutes)
 
 // 启动服务
 app.listen(PORT, () => {

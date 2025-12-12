@@ -1,0 +1,182 @@
+<script setup lang="ts">
+import { usePlayerStore } from '@/stores/player'
+import type { Song } from '@/types'
+import { VideoPlay, Picture, Loading } from '@element-plus/icons-vue'
+import ScrollingText from '@/components/base/ScrollingText.vue'
+
+// 接收父组件传来的歌曲列表
+const props = defineProps<{
+  songs: Song[]
+  // 可选：是否显示加载状态
+  loading?: boolean
+  // 可选：空状态时的描述文字
+  emptyText?: string
+}>()
+
+const playerStore = usePlayerStore()
+
+// 处理点击播放
+const handlePlay = (song: Song) => {
+  playerStore.playSong(song)
+}
+</script>
+
+<template>
+  <div class="song-list-container">
+    <!-- 加载中 -->
+    <div v-if="loading" class="loading-state">
+      <el-skeleton :rows="3" animated />
+    </div>
+
+    <!-- 有数据 -->
+    <div v-else-if="songs.length > 0" class="song-grid">
+      <!-- 插槽：允许父组件在列表前插入自定义内容（如随机播放卡片） -->
+      <slot name="prepend" />
+
+      <el-card
+        v-for="song in songs"
+        :key="song.id"
+        class="song-card"
+        :body-style="{ padding: '10px' }"
+        shadow="hover"
+        @click="handlePlay(song)"
+      >
+        <div class="cover-wrapper">
+          <el-image
+            :src="song.cover || '/default-cover.png'"
+            class="cover-img"
+            fit="cover"
+            lazy
+          >
+            <template #placeholder>
+              <div class="image-slot">
+                <el-icon class="is-loading"><Loading /></el-icon>
+              </div>
+            </template>
+            <template #error>
+              <div class="image-slot">
+                <el-icon><Picture /></el-icon>
+              </div>
+            </template>
+          </el-image>
+          <!-- 悬停显示的播放图标 -->
+          <div class="play-overlay">
+            <el-icon><VideoPlay /></el-icon>
+          </div>
+        </div>
+
+        <div class="info">
+          <ScrollingText class="title" :text="song.title" trigger="hover" />
+          <p class="artist" :title="song.artist">{{ song.artist }}</p>
+        </div>
+      </el-card>
+    </div>
+
+    <!-- 空状态 -->
+    <el-empty v-else :description="emptyText || '暂无歌曲'" />
+  </div>
+</template>
+
+<style scoped>
+.song-grid {
+  display: grid;
+  /* 响应式网格：最小宽度 200px，自动填充 */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.song-card {
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  background-color: var(--el-bg-color);
+}
+
+.song-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.cover-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background-color: var(--el-fill-color-light);
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s;
+  display: block;
+}
+
+.image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--el-fill-color-light);
+  color: var(--el-text-color-secondary);
+  font-size: 24px;
+}
+
+/* 悬停时图片轻微放大 */
+.song-card:hover .cover-img {
+  transform: scale(1.05);
+}
+
+/* 播放遮罩层 */
+.play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.play-overlay .el-icon {
+  font-size: 40px;
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.song-card:hover .play-overlay {
+  opacity: 1;
+}
+
+.info .title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--el-text-color-primary);
+}
+
+/* 当鼠标悬停在卡片上时，触发内部 ScrollingText 的滚动 */
+.song-card:hover :deep(.trigger-hover.is-overflow .scroll-wrapper) {
+  animation-play-state: running;
+}
+
+.info .artist {
+  margin: 0;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading-state {
+  padding: 20px;
+}
+</style>

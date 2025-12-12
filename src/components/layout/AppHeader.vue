@@ -14,8 +14,10 @@
       </el-input>
     </div>
     <div class="user-info">
-      <span class="username">用户</span>
-      <div class="avatar">U</div>
+      <el-text size="large" tag="b">用户</el-text>
+      <el-avatar size="midium">
+        <el-icon><IEpUserFilled /></el-icon>
+      </el-avatar>
     </div>
   </header>
 </template>
@@ -23,8 +25,8 @@
 <style scoped>
 .header {
   height: 60px;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
+  background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--el-border-color-light);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -33,7 +35,7 @@
 .search-bar input {
   padding: 8px 12px;
   border-radius: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--el-border-color);
   width: 300px;
   outline: none;
 }
@@ -41,14 +43,5 @@
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.avatar {
-  width: 32px;
-  height: 32px;
-  background-color: #ddd;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 </style>

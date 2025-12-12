@@ -20,7 +20,24 @@ export interface User {
   id: number
   username: string
   role: 'admin' | 'user'
+  avatar?: string | null
+  bio?: string | null
+  gender?: string | null
+  birthday?: string | null // ISO Date string
+  region?: string | null
   createdAt: string
+}
+
+// 登录/注册成功后的响应数据
+export interface AuthResponse {
+  message: string
+  token: string
+  user: User
+}
+
+// 通用错误响应
+export interface ApiError {
+  message: string
 }
 
 // 播放记录接口

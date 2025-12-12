@@ -1,23 +1,45 @@
 <template>
-  <aside class="sidebar">
+  <div class="sidebar">
     <div class="logo">
-      <h1>🎵 唱唱播</h1>
+      <h1>
+      <el-icon ><IEpHeadset /></el-icon>
+      莫小帅唱唱播
+    </h1>
     </div>
-    <nav>
-      <ul>
-        <li class="active"><a href="#">首页</a></li>
-        <li><a href="#">我的音乐</a></li>
-        <li><a href="#">排行榜</a></li>
-      </ul>
-    </nav>
-  </aside>
+    <el-menu
+      default-active="/"
+      class="side-menu"
+      router
+    >
+      <el-menu-item index="/">
+        <el-icon><IEpHomeFilled /></el-icon>
+        <span>首页</span>
+      </el-menu-item>
+      <el-menu-item index="/album">
+        <el-icon><IEpCollection /></el-icon>
+        <span>专辑</span>
+      </el-menu-item>
+      <el-menu-item index="/my-music">
+        <el-icon><IEpStarFilled /></el-icon>
+        <span>我喜欢的音乐</span>
+      </el-menu-item>
+      <el-menu-item index="/rank">
+        <el-icon><IEpTrophy /></el-icon>
+        <span>排行榜</span>
+      </el-menu-item>
+      <el-menu-item index="/profile">
+        <el-icon><IEpUserFilled /></el-icon>
+        <span>个人中心</span>
+      </el-menu-item>
+    </el-menu>
+  </div>
 </template>
 
 <style scoped>
 .sidebar {
   width: 100%;
   height: 100%;
-  background-color: #f5f5f5;
+  background-color: var(--el-bg-color); /* 侧边栏背景色 */
   display: flex;
   flex-direction: column;
 }
@@ -26,27 +48,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--el-border-color-light);
 }
 .logo h1 {
   font-size: 18px;
   margin: 0;
-  color: #42b983;
+  color: var(--el-color-primary);
 }
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-nav li a {
-  display: block;
-  padding: 15px 20px;
-  text-decoration: none;
-  color: #333;
-  transition: background-color 0.2s;
-}
-nav li.active a, nav li a:hover {
-  background-color: #e6e6e6;
-  color: #42b983;
+
+/* 覆盖 el-menu 默认样式 */
+.side-menu {
+  border-right: none; /* 去除菜单右侧边框 */
+  flex: 1;
 }
 </style>

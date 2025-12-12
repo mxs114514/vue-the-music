@@ -5,75 +5,66 @@ import AppFooterPlayerBar from './AppFooterPlayerBar.vue'
 </script>
 
 <template>
-  <div class="layout-container">
+  <el-container class="layout-container">
     <!-- 上半部分：侧边栏 + 右侧内容 -->
-    <div class="main-wrapper">
+    <el-container class="main-wrapper">
       <!-- 左侧侧边栏 -->
-      <aside class="left-side">
+      <el-aside width="200px" class="left-side">
         <AppSideNavBar />
-      </aside>
+      </el-aside>
 
       <!-- 右侧主体 -->
-      <div class="right-side">
+      <el-container class="right-side">
         <!-- 顶部 -->
-        <AppHeader />
+        <el-header height="auto">
+          <AppHeader />
+        </el-header>
 
         <!-- 中间内容区 (插槽) -->
-        <main class="main-content">
+        <el-main class="main-content">
           <slot></slot>
-        </main>
-      </div>
-    </div>
+        </el-main>
+      </el-container>
+    </el-container>
 
     <!-- 底部播放栏 (横跨全屏) -->
-    <footer class="footer-bar">
+    <el-footer height="80px" class="footer-bar">
       <AppFooterPlayerBar />
-    </footer>
-  </div>
+    </el-footer>
+  </el-container>
 </template>
 
 <style scoped>
 .layout-container {
-  display: flex;
-  flex-direction: column; /* 整体改为上下布局 */
   height: 100vh;
   width: 100vw;
   overflow: hidden;
 }
 
 .main-wrapper {
-  flex: 1; /* 占据除底部外的所有空间 */
-  display: flex; /* 内部左右布局 */
   overflow: hidden; /* 防止溢出 */
 }
 
 .left-side {
-  width: 200px;
-  flex-shrink: 0;
-  border-right: 1px solid #eee;
+  border-right: 1px solid var(--el-border-color-light);
 }
 
 .right-side {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background-color: #fafafa;
-  min-width: 0;
+  background-color: var(--el-fill-color-lighter);
 }
 
 .main-content {
-  flex: 1;
-  overflow-y: auto;
   padding: 20px;
   position: relative;
 }
 
 .footer-bar {
-  height: 80px;
-  flex-shrink: 0;
   z-index: 100;
-  /* 确保横跨全屏 */
-  width: 100%;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--el-border-color-light);
+}
+
+/* 去除 Element Plus 容器组件的默认 Padding */
+.el-header, .el-footer {
+  padding: 0;
 }
 </style>
