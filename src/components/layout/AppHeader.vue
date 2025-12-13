@@ -8,10 +8,7 @@ const authStore = useAuthStore()
   <header class="header">
     <div class="search-bar">
       <!-- 测试自动导入: el-input, el-icon, IEpSearch -->
-      <el-input
-        placeholder="搜索音乐..."
-        class="search-input"
-      >
+      <el-input placeholder="搜索音乐..." class="search-input">
         <template #prefix>
           <el-icon>
             <IEpSearch />
@@ -20,7 +17,9 @@ const authStore = useAuthStore()
       </el-input>
     </div>
     <div class="user-info">
-      <el-text size="large" tag="b">{{ authStore.user?.nickname || authStore.user?.username || '未登录' }}</el-text>
+      <el-text size="large" tag="b">{{
+        authStore.user?.nickname || authStore.user?.username || '未登录'
+      }}</el-text>
       <el-avatar size="midium" :src="authStore.user?.avatar">
         <el-icon><IEpUserFilled /></el-icon>
       </el-avatar>

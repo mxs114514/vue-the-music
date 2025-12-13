@@ -13,7 +13,6 @@ const { songList, isLoading } = storeToRefs(playerStore)
 // 用于展示的推荐歌曲列表
 const recommendSongs = ref<Song[]>([])
 
-
 // 生成今日推荐逻辑
 const generateDailyRecommend = () => {
   if (songList.value.length === 0) return
@@ -28,7 +27,7 @@ const generateDailyRecommend = () => {
       const ids = JSON.parse(cachedIds) as number[]
       // 根据 ID 从 songList 中找到对应的歌曲对象
       // filter 保证即使缓存的 ID 在新歌单里找不到了（比如被删了）也不会报错
-      const cachedSongs = songList.value.filter(s => ids.includes(s.id))
+      const cachedSongs = songList.value.filter((s) => ids.includes(s.id))
 
       // 如果缓存的歌曲数量合理（比如没有全部失效），就使用缓存
       if (cachedSongs.length > 0) {
@@ -44,12 +43,12 @@ const generateDailyRecommend = () => {
   // 创建一个副本以免影响原数组
   const shuffled = [...songList.value].sort(() => 0.5 - Math.random())
   // 取前 10 首，如果不足 10 首则取全部
-  const selected = shuffled.slice(0, 10)
+  const selected = shuffled.slice(0, 9)
 
   recommendSongs.value = selected
 
   // 3. 保存到缓存
-  const selectedIds = selected.map(s => s.id)
+  const selectedIds = selected.map((s) => s.id)
   localStorage.setItem('daily_recommend_date', today)
   localStorage.setItem('daily_recommend_ids', JSON.stringify(selectedIds))
 }
@@ -72,40 +71,32 @@ watch(songList, () => {
 </script>
 
 <template>
-    <div class="home-view">
-      <h1 class="page-title">今日推荐</h1>
+  <div class="home-view">
+    <h1 class="page-title">今日推荐</h1>
 
-      <!-- 使用封装的业务组件 -->
-      <SongList
-        :songs="recommendSongs"
-        :loading="isLoading"
-        empty-text="暂无推荐歌曲"
-      >
-        <template #prepend>
-          <el-card
-            class="song-card random-card"
-            :body-style="{ padding: '10px' }"
-            shadow="hover"
-            @click="playerStore.playRandomSong()"
-          >
-            <div class="cover-wrapper random-cover">
-              <el-image
-                src="/imgs/随机一哈.png"
-                class="random-bg-img"
-                fit="cover"
-              />
-              <div class="random-icon-wrapper">
-                <el-icon><VideoPlay /></el-icon>
-              </div>
+    <!-- 使用封装的业务组件 -->
+    <SongList :songs="recommendSongs" :loading="isLoading" empty-text="暂无推荐歌曲">
+      <template #prepend>
+        <el-card
+          class="song-card random-card"
+          :body-style="{ padding: '10px' }"
+          shadow="hover"
+          @click="playerStore.playRandomSong()"
+        >
+          <div class="cover-wrapper random-cover">
+            <el-image src="/imgs/随机一哈.png" class="random-bg-img" fit="cover" />
+            <div class="random-icon-wrapper">
+              <el-icon><VideoPlay /></el-icon>
             </div>
-            <div class="info">
-              <h3 class="title">随机一哈</h3>
-              <p class="artist">点击随机哈气</p>
-            </div>
-          </el-card>
-        </template>
-      </SongList>
-    </div>
+          </div>
+          <div class="info">
+            <h3 class="title">随机一哈</h3>
+            <p class="artist">点击随机哈气</p>
+          </div>
+        </el-card>
+      </template>
+    </SongList>
+  </div>
 </template>
 
 <style scoped>
@@ -176,7 +167,7 @@ watch(songList, () => {
 .random-icon-wrapper .el-icon {
   font-size: 48px;
   color: white;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .info .title {
@@ -203,14 +194,14 @@ watch(songList, () => {
   background: #fff;
   padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .song-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 .cover {
@@ -236,7 +227,8 @@ watch(songList, () => {
   font-size: 14px;
 }
 
-.loading, .empty {
+.loading,
+.empty {
   padding: 50px;
   text-align: center;
   color: #999;

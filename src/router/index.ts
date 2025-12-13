@@ -1,12 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import HomeView from '../views/HomeView.vue'
-import AlbumView from '../views/AlbumView.vue'
-import MyMusicView from '../views/MyMusicView.vue'
-import RankView from '../views/RankView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import EditProfileView from '../views/EditProfileView.vue'
-import LoginView from '../views/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,39 +7,54 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginView,
+      component: () => import('../views/LoginView.vue'),
       // 添加 meta 字段，标记此路由不需要基础布局
       meta: { layout: 'BasicAuthLayout' },
     },
     {
       path: '/album',
       name: 'album',
-      component: AlbumView,
+      component: () => import('../views/AlbumView.vue'),
     },
     {
       path: '/my-music',
       name: 'my-music',
-      component: MyMusicView,
+      component: () => import('../views/MyMusicView.vue'),
     },
     {
       path: '/rank',
       name: 'rank',
-      component: RankView,
+      component: () => import('../views/RankView.vue'),
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfileView,
+      component: () => import('../views/ProfileView.vue'),
     },
     {
       path: '/edit-profile',
       name: 'edit-profile',
-      component: EditProfileView,
+      component: () => import('../views/EditProfileView.vue'),
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue'),
+    },
+    {
+      path: '/settings/reset-password',
+      name: 'reset-password',
+      component: () => import('../views/ResetPasswordView.vue'),
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('../views/SearchView.vue'),
     },
   ],
 })

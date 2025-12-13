@@ -31,6 +31,10 @@
         <el-icon><IEpUserFilled /></el-icon>
         <span>个人中心</span>
       </el-menu-item>
+      <el-menu-item index="/settings">
+        <el-icon><IEpSetting /></el-icon>
+        <span>设置</span>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>

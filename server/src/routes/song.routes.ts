@@ -11,4 +11,6 @@ router.get('/albums', getAlbums)
 // 使用可选认证：如果用户登录了，getSongs 就能拿到 userId，从而正确返回 isFavorited 状态
 router.get('/', optionalAuthMiddleware, getSongs)
 
+// GET /api/songs/search
+
 export default router

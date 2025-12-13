@@ -30,10 +30,29 @@ const handleFavorite = (e: Event, song: Song) => {
 <template>
   <div class="song-list-container">
     <!-- 加载中 -->
-    <div v-if="loading" class="loading-state">
-      <el-skeleton :rows="3" animated />
+    <div v-if="loading" class="song-grid">
+      <div v-for="i in 10" :key="i">
+        <el-skeleton animated>
+          <template #template>
+            <div
+              style="
+                width: 100%;
+                aspect-ratio: 1;
+                border-radius: 6px;
+                overflow: hidden;
+                margin-bottom: 10px;
+              "
+            >
+              <el-skeleton-item variant="image" style="width: 100%; height: 100%" />
+            </div>
+            <div>
+              <el-skeleton-item variant="text" style="width: 70%" />
+              <el-skeleton-item variant="text" style="width: 40%; margin-top: 8px" />
+            </div>
+          </template>
+        </el-skeleton>
+      </div>
     </div>
-
     <!-- 有数据 -->
     <div v-else-if="songs.length > 0" class="song-grid">
       <!-- 插槽：允许父组件在列表前插入自定义内容（如随机播放卡片） -->
@@ -48,12 +67,7 @@ const handleFavorite = (e: Event, song: Song) => {
         @click="handlePlay(song)"
       >
         <div class="cover-wrapper">
-          <el-image
-            :src="song.cover || '/default-cover.png'"
-            class="cover-img"
-            fit="cover"
-            lazy
-          >
+          <el-image :src="song.cover || '/default-cover.png'" class="cover-img" fit="cover" lazy>
             <template #placeholder>
               <div class="image-slot">
                 <el-icon class="is-loading"><Loading /></el-icon>
@@ -164,7 +178,7 @@ const handleFavorite = (e: Event, song: Song) => {
 .play-overlay .el-icon {
   font-size: 40px;
   color: white;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .song-card:hover .play-overlay {

@@ -3,6 +3,7 @@ import { prisma } from '../lib/prisma'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
+import bcrypt from 'bcryptjs'
 
 // --- 头像上传配置 ---
 const storage = multer.diskStorage({
@@ -80,7 +81,7 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = req.user!.id
-    const { nickname, bio, gender, birthday, region, avatar } = req.body
+    const { nickname, bio, gender, birthday, region, avatar, username, password } = req.body
 
     // 准备更新数据
     const updateData: any = {
@@ -89,6 +90,27 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
       gender,
       region,
       avatar,
+    }
+
+    // 处理用户名修改
+    if (username) {
+      // 检查用户名是否已被占用
+      const existingUser = await prisma.user.findUnique({
+        where: { username },
+      })
+
+      // 如果存在且不是当前用户
+      if (existingUser && existingUser.id !== userId) {
+        res.status(400).json({ message: '用户名已存在' })
+        return
+      }
+      updateData.username = username
+    }
+
+    // 处理密码修改
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10)
+      updateData.password = hashedPassword
     }
 
     // 处理生日格式 (前端传 YYYY-MM-DD 字符串 -> Date)
