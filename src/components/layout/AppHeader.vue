@@ -1,14 +1,30 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+
+const searchText = ref('')
+const router = useRouter()
+const onSearch = () => {
+  if (searchText.value.trim()) {
+    // 修正：路由名称必须与 router/index.ts 中定义的一致（区分大小写）
+    router.push({ name: 'search', query: { search: searchText.value.trim() } })
+  }
+}
 </script>
 
 <template>
   <header class="header">
     <div class="search-bar">
       <!-- 测试自动导入: el-input, el-icon, IEpSearch -->
-      <el-input placeholder="搜索音乐..." class="search-input">
+      <el-input
+        placeholder="搜索音乐..."
+        class="search-input"
+        v-model="searchText"
+        @keyup.enter="onSearch"
+      >
         <template #prefix>
           <el-icon>
             <IEpSearch />

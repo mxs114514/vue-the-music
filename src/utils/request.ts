@@ -1,4 +1,8 @@
-import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios'
+import axios, {
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosRequestConfig,
+} from 'axios'
 
 // 存储 Token 获取器和 Logout 处理器的变量
 let getToken: () => string | null = () => null
@@ -89,14 +93,13 @@ service.interceptors.response.use(
 
 // 4. 导出封装的方法，保持与原有 API 一致
 export default {
-  get: <T>(url: string, config?: InternalAxiosRequestConfig) => service.get<T, T>(url, config),
+  get: <T>(url: string, config?: AxiosRequestConfig) => service.get<T, T>(url, config),
 
-  post: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig) =>
+  post: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
     service.post<T, T>(url, data, config),
 
-  put: <T>(url: string, data?: any, config?: InternalAxiosRequestConfig) =>
+  put: <T>(url: string, data?: any, config?: AxiosRequestConfig) =>
     service.put<T, T>(url, data, config),
 
-  delete: <T>(url: string, config?: InternalAxiosRequestConfig) =>
-    service.delete<T, T>(url, config),
+  delete: <T>(url: string, config?: AxiosRequestConfig) => service.delete<T, T>(url, config),
 }

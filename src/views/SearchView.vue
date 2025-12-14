@@ -14,17 +14,20 @@ const keyword = ref('')
 
 // 核心逻辑：执行搜索
 const loadData = async () => {
-  // TODO 1: 从 route.query 中获取 search 参数，赋值给 keyword
-  // const query = ...
+  // 修正 1: 使用 route 而不是 $router
+  const query = (route.query.search as string) || ''
+
+  // 修正 2: 更新 keyword，以便在界面显示
+  keyword.value = query
 
   // 如果没有关键词，就直接返回，不发请求
   if (!query) return
 
   loading.value = true
   try {
-    // TODO 2: 调用 fetchSearchSongs 接口
-    // const res = ...
-    // songs.value = ...
+    // 修正 3: API 需要传对象 { search: query }，且需要 await
+    const res = await fetchSearchSongs({ search: query })
+    songs.value = res
   } catch (error) {
     console.error(error)
   } finally {
@@ -37,9 +40,13 @@ onMounted(() => {
   loadData()
 })
 
-// TODO 3: 监听路由参数变化
-// 如果用户在当前页又搜了新词，URL 会变，但组件不会重新创建。
-// 所以我们需要 watch(() => route.query.search, ... )
+// 修正 4: 使用 route 而不是 $route
+watch(
+  () => route.query.search,
+  () => {
+    loadData()
+  }
+)
 </script>
 
 <template>
