@@ -27,6 +27,10 @@ model Song {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // 新增：上传者关联 (null=系统歌曲, 有值=用户私有歌曲)
+  uploaderId Int?
+  uploader   User? @relation("UserUploads", fields: [uploaderId], references: [id])
+
   playRecords PlayRecord[]
   favoritedBy Favorite[] // 新增：关联收藏记录，用于统计收藏数
 
@@ -35,6 +39,7 @@ model Song {
   @@index([createdAt])
   @@index([playCount]) // 用于“总热度榜”快速排序
   @@index([album])
+  @@index([uploaderId]) // 新增：上传者索引
 }
 
 model User {
@@ -50,8 +55,9 @@ model User {
   birthday  DateTime? // 生日
   region    String? // 地区
 
-  playRecords PlayRecord[]
-  favorites   Favorite[] // 新增：用户的收藏列表
+  playRecords   PlayRecord[]
+  favorites     Favorite[] // 新增：用户的收藏列表
+  uploadedSongs Song[]       @relation("UserUploads") // 新增：用户上传的歌曲
 }
 
 // 新增：收藏/喜欢 中间表

@@ -35,7 +35,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "music-metadata": "^11.10.3"
   },
   "type": "module"
 }
