@@ -22,6 +22,7 @@ export default defineConfig({
           prefix: 'Icon',
         }),
       ],
+      dirs: ['./src/composables'],
     }),
     Components({
       resolvers: [

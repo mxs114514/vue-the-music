@@ -2,6 +2,10 @@
 import AppSideNavBar from './AppSideNavBar.vue'
 import AppHeader from './AppHeader.vue'
 import AppFooterPlayerBar from './AppFooterPlayerBar.vue'
+import LyricsPage from '../business/LyricsPage.vue'
+import { usePlayerStore } from '@/stores/player'
+
+const playerStore = usePlayerStore()
 </script>
 
 <template>
@@ -27,6 +31,10 @@ import AppFooterPlayerBar from './AppFooterPlayerBar.vue'
       </el-container>
     </el-container>
 
+    <!-- 歌词界面 -->
+    <Transition name="slide-up">
+      <LyricsPage v-show="playerStore.isLyricsPageOpen" />
+    </Transition>
     <!-- 底部播放栏 (横跨全屏) -->
     <el-footer height="80px" class="footer-bar">
       <AppFooterPlayerBar />
@@ -64,7 +72,19 @@ import AppFooterPlayerBar from './AppFooterPlayerBar.vue'
 }
 
 /* 去除 Element Plus 容器组件的默认 Padding */
-.el-header, .el-footer {
+.el-header,
+.el-footer {
   padding: 0;
+}
+
+/* 歌词页滑入滑出动画 */
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.3s ease-in-out;
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
 }
 </style>

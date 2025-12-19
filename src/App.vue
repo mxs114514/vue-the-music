@@ -10,7 +10,7 @@ const route = useRoute()
 // 1. 定义布局映射表 (字符串 -> 组件)
 const layouts: Record<string, any> = {
   BasicLayout,
-  BasicAuthLayout
+  BasicAuthLayout,
 }
 
 // 2. 动态计算当前布局

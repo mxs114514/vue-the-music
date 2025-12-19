@@ -3,6 +3,7 @@ import { ref, watch } from 'vue'
 import type { Song as SongType } from '@/types'
 import request from '@/utils/request'
 import { toggleFavorite as toggleFavoriteApi } from '@/api/favorite'
+import { recordPlay as recordPlayApi } from '@/api/songs'
 import { ElMessage } from 'element-plus'
 
 const STORAGE_KEY = 'ccb-player-state'
@@ -16,6 +17,7 @@ export const usePlayerStore = defineStore('player', () => {
   const isPlaying = ref(false)
   const currenRate = ref(1.0)
   const currenVolume = ref(1.0)
+  const isLyricsPageOpen = ref(false)
 
   // 切换收藏状态
   const toggleFavorite = async (song: SongType) => {
@@ -57,6 +59,11 @@ export const usePlayerStore = defineStore('player', () => {
     currentSong.value = song
     currentTime.value = 0
     isPlaying.value = true
+
+    // 记录播放次数
+    recordPlayApi(song.id).catch((err) => {
+      console.error('记录播放失败', err)
+    })
   }
   // 下一首
   const nextSong = () => {
@@ -122,10 +129,10 @@ export const usePlayerStore = defineStore('player', () => {
 
       songList.value = data
     } catch (error) {
-      // console.error('❌ [PlayerStore] 获取歌曲列表失败:', error)
+      console.error('❌ [PlayerStore] 获取歌曲列表失败:', error)
     } finally {
       isLoading.value = false
-      // console.log('✅ [PlayerStore] 获取流程结束, isLoading:', isLoading.value)
+      console.log('✅ [PlayerStore] 获取流程结束, isLoading:', isLoading.value)
     }
   }
 
@@ -161,6 +168,12 @@ export const usePlayerStore = defineStore('player', () => {
     }
   }
 
+  const toggleLyricsPage = () => {
+    console.log('🔄 [PlayerStore] 切换歌词页面被调用。当前状态:', isLyricsPageOpen.value)
+    isLyricsPageOpen.value = !isLyricsPageOpen.value
+    console.log('✅ [PlayerStore] 新状态:', isLyricsPageOpen.value)
+  }
+
   // === 3. 监听与触发 ===
 
   // 监听歌曲变化 -> 立即保存
@@ -190,11 +203,13 @@ export const usePlayerStore = defineStore('player', () => {
     currentTime,
     currenRate,
     currenVolume,
+    isLyricsPageOpen,
     playSong,
     nextSong,
     prevSong,
     playRandomSong,
     fetchSongList,
     toggleFavorite,
+    toggleLyricsPage,
   }
 })

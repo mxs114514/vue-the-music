@@ -57,7 +57,11 @@ const handleRegister = async () => {
         :prefix-icon="Lock"
       >
         <template #suffix>
-          <el-icon class="el-input__icon" @click="passwordVisible = !passwordVisible" style="cursor: pointer">
+          <el-icon
+            class="el-input__icon"
+            @click="passwordVisible = !passwordVisible"
+            style="cursor: pointer"
+          >
             <component :is="passwordVisible ? View : Hide" />
           </el-icon>
         </template>
@@ -71,13 +75,19 @@ const handleRegister = async () => {
         :prefix-icon="Lock"
       >
         <template #suffix>
-          <el-icon class="el-input__icon" @click="confirmPasswordVisible = !confirmPasswordVisible" style="cursor: pointer">
+          <el-icon
+            class="el-input__icon"
+            @click="confirmPasswordVisible = !confirmPasswordVisible"
+            style="cursor: pointer"
+          >
             <component :is="confirmPasswordVisible ? View : Hide" />
           </el-icon>
         </template>
       </el-input>
     </el-form-item>
-    <el-button type="primary" native-type="submit" :loading="loading" round class="btn">立即注册</el-button>
+    <el-button type="primary" native-type="submit" :loading="loading" round class="btn"
+      >立即注册</el-button
+    >
     <p class="social-text">加入我们，开启音乐之旅</p>
   </el-form>
 </template>

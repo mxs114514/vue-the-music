@@ -11,6 +11,8 @@ const props = defineProps<{
   loading?: boolean
   // 可选：空状态时的描述文字
   emptyText?: string
+  // 可选：是否显示排名角标 (用于排行榜)
+  showRank?: boolean
 }>()
 
 const playerStore = usePlayerStore()
@@ -59,7 +61,7 @@ const handleFavorite = (e: Event, song: Song) => {
       <slot name="prepend" />
 
       <el-card
-        v-for="song in songs"
+        v-for="(song, index) in songs"
         :key="song.id"
         class="song-card"
         :body-style="{ padding: '10px' }"
@@ -67,6 +69,14 @@ const handleFavorite = (e: Event, song: Song) => {
         @click="handlePlay(song)"
       >
         <div class="cover-wrapper">
+          <!-- 排名角标 -->
+          <div v-if="showRank" class="rank-badge" :class="'rank-' + (index + 1)">
+            <template v-if="index === 0">NO.1 🏆</template>
+            <template v-else-if="index === 1">NO.2 🥈</template>
+            <template v-else-if="index === 2">NO.3 🥉</template>
+            <template v-else>{{ index + 1 }}</template>
+          </div>
+
           <el-image :src="song.cover || '/default-cover.png'" class="cover-img" fit="cover" lazy>
             <template #placeholder>
               <div class="image-slot">
@@ -246,5 +256,34 @@ const handleFavorite = (e: Event, song: Song) => {
 
 .loading-state {
   padding: 20px;
+}
+
+/* 排名角标样式 */
+.rank-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 4px 8px;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  z-index: 2;
+  border-bottom-right-radius: 8px;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6); /* 默认背景 */
+}
+
+.rank-1 {
+  background: linear-gradient(135deg, #f56c6c, #f29b9b);
+  font-size: 14px;
+  padding: 6px 10px;
+}
+
+.rank-2 {
+  background: linear-gradient(135deg, #e6a23c, #f3d19e);
+}
+
+.rank-3 {
+  background: linear-gradient(135deg, #409eff, #79bbff);
 }
 </style>

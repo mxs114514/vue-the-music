@@ -52,6 +52,11 @@ const router = createRouter({
       component: () => import('../views/ResetPasswordView.vue'),
     },
     {
+      path: '/upload',
+      name: 'upload',
+      component: () => import('../views/UpLoadSongView.vue'),
+    },
+    {
       path: '/search',
       name: 'search',
       component: () => import('../views/SearchView.vue'),

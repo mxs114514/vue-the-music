@@ -48,6 +48,8 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElSkeletonItem: typeof import('element-plus/es')['ElSkeletonItem']
+    ElTable: typeof import('element-plus/es')['ElTable']
+    ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElText: typeof import('element-plus/es')['ElText']
@@ -58,17 +60,24 @@ declare module 'vue' {
     IEpCollection: typeof import('~icons/ep/collection')['default']
     IEpHeadset: typeof import('~icons/ep/headset')['default']
     IEpHomeFilled: typeof import('~icons/ep/home-filled')['default']
+    IEpPlus: typeof import('~icons/ep/plus')['default']
     IEpSearch: typeof import('~icons/ep/search')['default']
     IEpSetting: typeof import('~icons/ep/setting')['default']
     IEpStarFilled: typeof import('~icons/ep/star-filled')['default']
     IEpTrophy: typeof import('~icons/ep/trophy')['default']
+    IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
     IEpUserFilled: typeof import('~icons/ep/user-filled')['default']
     LoginForm: typeof import('./src/components/business/LoginForm.vue')['default']
+    LyricsPage: typeof import('./src/components/business/LyricsPage.vue')['default']
     ProfileEditForm: typeof import('./src/components/business/ProfileEditForm.vue')['default']
     RegisterForm: typeof import('./src/components/business/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollingText: typeof import('./src/components/base/ScrollingText.vue')['default']
     SongList: typeof import('./src/components/business/SongList.vue')['default']
+    SongUploadForm: typeof import('./src/components/business/SongUploadForm.vue')['default']
+  }
+  export interface GlobalDirectives {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

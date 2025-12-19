@@ -59,6 +59,7 @@ declare global {
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useId: typeof import('vue').useId
+  const useLoading: typeof import('./src/composables/useLoading').useLoading
   const useModel: typeof import('vue').useModel
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef

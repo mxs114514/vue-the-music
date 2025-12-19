@@ -8,6 +8,11 @@ import ScrollingText from '@/components/base/ScrollingText.vue'
 const playerStore = usePlayerStore()
 const { currentSong, currentTime, currenVolume, currenRate } = storeToRefs(playerStore)
 
+const handleCoverClick = () => {
+  console.log('🖱️ [PlayerBar] Cover clicked')
+  playerStore.toggleLyricsPage()
+}
+
 // 引用 audio 元素
 const audioRef = ref<HTMLAudioElement | null>(null)
 
@@ -43,7 +48,24 @@ const onRateChange = () => {
   }
 }
 
+// 监听播放/暂停 -> 同步到 Store
+const onPlay = () => {
+  playerStore.isPlaying = true
+}
+
+const onPause = () => {
+  playerStore.isPlaying = false
+}
+
 // 监听 Store 变化 -> 同步到 Audio 元素 (支持双向绑定)
+watch(currentTime, (newVal) => {
+  // 只有当差异较大时才同步，避免 timeupdate 导致的循环更新和卡顿
+  // 阈值设为 0.5 秒
+  if (audioRef.value && Math.abs(audioRef.value.currentTime - newVal) > 0.5) {
+    audioRef.value.currentTime = newVal
+  }
+})
+
 watch(currenVolume, (newVal) => {
   if (audioRef.value && Math.abs(audioRef.value.volume - newVal) > 0.01) {
     audioRef.value.volume = newVal
@@ -62,24 +84,18 @@ watch(currenRate, (newVal) => {
     <!-- 左侧：歌曲信息 -->
     <div class="song-info" v-if="currentSong">
       <!-- 封面 -->
-      <el-image
-        :src="currentSong.cover || '/default-cover.png'"
-        class="mini-cover"
-        fit="cover"
-      >
-        <template #error>
-          <div class="image-slot">
-            <el-icon><Picture /></el-icon>
-          </div>
-        </template>
-      </el-image>
+      <div class="cover-wrapper" @click="handleCoverClick">
+        <el-image :src="currentSong.cover || '/default-cover.png'" class="mini-cover" fit="cover">
+          <template #error>
+            <div class="image-slot">
+              <el-icon><Picture /></el-icon>
+            </div>
+          </template>
+        </el-image>
+      </div>
       <!-- 文字信息 -->
       <div class="text-info">
-        <ScrollingText
-          class="title"
-          :text="currentSong.title"
-          trigger="always"
-        />
+        <ScrollingText class="title" :text="currentSong.title" trigger="always" />
         <el-text class="artist" size="small" type="info">{{ currentSong.artist }}</el-text>
       </div>
     </div>
@@ -111,6 +127,8 @@ watch(currenRate, (newVal) => {
         @loadedmetadata="onLoadedMetadata"
         @volumechange="onVolumeChange"
         @ratechange="onRateChange"
+        @play="onPlay"
+        @pause="onPause"
       ></audio>
     </div>
 
@@ -128,7 +146,7 @@ watch(currenRate, (newVal) => {
   align-items: center;
   padding: 0 20px;
   justify-content: space-between;
-  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 /* 左侧歌曲信息 */
@@ -137,13 +155,19 @@ watch(currenRate, (newVal) => {
   align-items: center;
   width: 250px; /* 固定宽度，防止挤压中间 */
 }
+
 .mini-cover {
   width: 50px;
   height: 50px;
   border-radius: 4px;
-  margin-right: 12px;
   background-color: var(--el-fill-color);
   display: block;
+}
+
+.cover-wrapper {
+  margin-right: 12px;
+  cursor: pointer;
+  display: flex; /* 确保 wrapper 包裹住 image */
 }
 .image-slot {
   display: flex;

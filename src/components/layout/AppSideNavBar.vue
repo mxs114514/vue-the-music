@@ -2,15 +2,11 @@
   <div class="sidebar">
     <div class="logo">
       <h1>
-      <el-icon ><IEpHeadset /></el-icon>
-      莫小帅唱唱播
-    </h1>
+        <el-icon><IEpHeadset /></el-icon>
+        莫小帅唱唱播
+      </h1>
     </div>
-    <el-menu
-      default-active="/"
-      class="side-menu"
-      router
-    >
+    <el-menu default-active="/" class="side-menu" router>
       <el-menu-item index="/">
         <el-icon><IEpHomeFilled /></el-icon>
         <span>首页</span>
@@ -30,6 +26,10 @@
       <el-menu-item index="/profile">
         <el-icon><IEpUserFilled /></el-icon>
         <span>个人中心</span>
+      </el-menu-item>
+      <el-menu-item index="/upload">
+        <el-icon><IEpUploadFilled /></el-icon>
+        <span>上传歌曲</span>
       </el-menu-item>
       <el-menu-item index="/settings">
         <el-icon><IEpSetting /></el-icon>

@@ -5,7 +5,13 @@
       <el-row :gutter="20" align="middle">
         <!-- 左侧头像 -->
         <el-col :span="6" class="avatar-col">
-          <el-avatar :size="120" :src="userInfo.avatar || 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'" />
+          <el-avatar
+            :size="120"
+            :src="
+              userInfo.avatar ||
+              'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+            "
+          />
         </el-col>
 
         <!-- 右侧信息 -->
@@ -18,10 +24,18 @@
           </div>
 
           <el-descriptions :column="2" border>
-            <el-descriptions-item label="简介" :span="2">{{ userInfo.bio || '这个人很懒，什么都没有留下' }}</el-descriptions-item>
-            <el-descriptions-item label="性别">{{ userInfo.gender || '保密' }}</el-descriptions-item>
-            <el-descriptions-item label="生日">{{ userInfo.birthday || '未设置' }}</el-descriptions-item>
-            <el-descriptions-item label="地区">{{ userInfo.region || '未知' }}</el-descriptions-item>
+            <el-descriptions-item label="简介" :span="2">{{
+              userInfo.bio || '这个人很懒，什么都没有留下'
+            }}</el-descriptions-item>
+            <el-descriptions-item label="性别">{{
+              userInfo.gender || '保密'
+            }}</el-descriptions-item>
+            <el-descriptions-item label="生日">{{
+              userInfo.birthday || '未设置'
+            }}</el-descriptions-item>
+            <el-descriptions-item label="地区">{{
+              userInfo.region || '未知'
+            }}</el-descriptions-item>
           </el-descriptions>
         </el-col>
       </el-row>
@@ -36,28 +50,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Edit } from '@element-plus/icons-vue'
 import type { Song } from '@/types'
 import { usePlayerStore } from '@/stores/player'
 import { useAuthStore } from '@/stores/auth'
 import SongList from '@/components/business/SongList.vue' // 引入新组件
+import { fetchSearchSongs } from '@/api/songs'
 
 const playerStore = usePlayerStore()
 const authStore = useAuthStore()
 
 // 从 store 获取用户信息
-const userInfo = computed(() => authStore.user || {
-  username: '未登录',
-  nickname: '', // 补充 nickname 默认值
-  avatar: '',
-  bio: '',
-  gender: '',
-  birthday: '',
-  region: ''
-})
+const userInfo = computed(
+  () =>
+    authStore.user || {
+      username: '未登录',
+      nickname: '', // 补充 nickname 默认值
+      avatar: '',
+      bio: '',
+      gender: '',
+      birthday: '',
+      region: '',
+    }
+)
 
 const uploadedSongs = ref<Song[]>([])
+
+const fetchUploadedSongs = async () => {
+  if (!authStore.user?.id) return
+  try {
+    const res = await fetchSearchSongs({ uploaderId: authStore.user.id })
+    uploadedSongs.value = res
+  } catch (error) {
+    console.error('获取上传歌曲失败', error)
+  }
+}
+
+onMounted(() => {
+  fetchUploadedSongs()
+})
 
 const playSong = (song: Song) => {
   playerStore.playSong(song)
