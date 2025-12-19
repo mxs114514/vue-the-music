@@ -31,7 +31,7 @@
               userInfo.gender || '保密'
             }}</el-descriptions-item>
             <el-descriptions-item label="生日">{{
-              userInfo.birthday || '未设置'
+              formatBirthday(userInfo.birthday)
             }}</el-descriptions-item>
             <el-descriptions-item label="地区">{{
               userInfo.region || '未知'
@@ -76,6 +76,11 @@ const userInfo = computed(
 )
 
 const uploadedSongs = ref<Song[]>([])
+
+const formatBirthday = (dateStr: string | undefined | null) => {
+  if (!dateStr) return '未设置'
+  return dateStr.split('T')[0]
+}
 
 const fetchUploadedSongs = async () => {
   if (!authStore.user?.id) return
